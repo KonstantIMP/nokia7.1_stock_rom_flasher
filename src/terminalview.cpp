@@ -37,7 +37,7 @@ void TerminalView::run_process(const Glib::ustring & command) {
 
     while (fread(buffer, 1, 1, process)) {
         this->get_buffer()->set_text(this->get_buffer()->get_text() + buffer);
-        if(buffer[0] == '\n') this->get_buffer()->set_text(this->get_buffer()->get_text() + '\t');
+        if(buffer[0] == '\n') this->get_buffer()->set_text(this->get_buffer()->get_text());
         buffer[0] = 0; buffer[1] = 0;
     }
 
