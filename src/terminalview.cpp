@@ -26,7 +26,7 @@ void TerminalView::print_message(const Glib::ustring & msg) {
 void TerminalView::run_process(const Glib::ustring & command) {
     if(command == "") throw std::runtime_error("Command can\'t be empty");
 
-    this->get_buffer()->set_text(this->get_buffer()->get_text() + " " + command + "\n\t");
+    this->get_buffer()->set_text(this->get_buffer()->get_text() + " " + command + "\n");
 
     char buffer[2];
     buffer[1] = 0;
