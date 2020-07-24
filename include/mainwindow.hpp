@@ -20,6 +20,13 @@ protected:
     void on_adb_clicked();
     void on_rom_clicked();
 
+    void on_help_clicked();
+
+    void set_adb_path();
+    void set_rom_path();
+
+    void start_flash();
+
 private:
     Gtk::Label adb_msg;
     Gtk::Label rom_msg;
