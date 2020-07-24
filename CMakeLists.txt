@@ -15,5 +15,5 @@ if(NOT CMAKE_CXX_EXTENSIONS)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
-add_executable(nokia7.1_stock_rom_flasher src/main.cpp include/terminalview.hpp src/terminalview.cpp include/mainwindow.hpp src/mainwindow.cpp src/resources.cpp)
+add_executable(nokia7.1_stock_rom_flasher src/main.cpp include/terminalview.hpp src/terminalview.cpp include/mainwindow.hpp src/mainwindow.cpp src/resources.cpp include/flasher.hpp src/flasher.cpp)
 target_link_libraries(nokia7.1_stock_rom_flasher ${GTKMM_LIBRARIES})

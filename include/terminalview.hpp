@@ -5,6 +5,12 @@
 
 #include <cstdio>
 
+#ifdef __linux
+    const std::string prf = "[ LINUX ]";
+#else
+    const std::string prf = "[WINDOWS]";
+#endif
+
 class TerminalView : public Gtk::TextView {
 public:
     TerminalView(const Glib::ustring & = "");
