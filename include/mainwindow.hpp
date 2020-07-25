@@ -14,8 +14,6 @@ public:
     MainWindow();
     virtual ~MainWindow();
 
-    void notify();
-
 protected:
     void create_ui();
 
@@ -30,8 +28,6 @@ protected:
     void set_rom_path();
 
     void start_flash();
-
-    void flash_finished_sig();
 
 private:
     Gtk::Grid main_grid;
@@ -63,11 +59,6 @@ private:
 
     KonstantIMP::gtkmm_log logger;
     std::ofstream log;
-
-
-    std::thread * f_thread;
-
-    Glib::Dispatcher f_dispatcher;
 };
 
 #endif // MAINWINDOW_HPP

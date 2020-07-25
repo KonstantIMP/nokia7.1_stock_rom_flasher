@@ -12,7 +12,7 @@
     const std::string prf = "[WINDOWS]";
 #endif
 
-MainWindow::MainWindow() : logger(&log, &log_viewer), f_thread(nullptr) {
+MainWindow::MainWindow() : logger(&log, &log_viewer) {
     this->create_ui();
     this->connect_sig();
 
@@ -38,10 +38,6 @@ MainWindow::~MainWindow() {
     logger.make_record("Programm closed");
 
     log.close();
-}
-
-void MainWindow::notify() {
-    f_dispatcher.emit();
 }
 
 void MainWindow::create_ui() {
@@ -110,8 +106,6 @@ void MainWindow::connect_sig() {
     set_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::set_rom_path));
 
     flash_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::start_flash));
-
-    f_dispatcher.connect(sigc::mem_fun(*this, &MainWindow::flash_finished_sig));
 }
 
 void MainWindow::on_adb_clicked() {
@@ -406,13 +400,4 @@ void MainWindow::start_flash() {
     logger.make_record("Flash finished");
 
     load_bar.set_fraction(1.f);
-}
-
-void MainWindow::flash_finished_sig() {
-    if(f_thread != nullptr) {
-        if(f_thread->joinable()) f_thread->join();
-    }
-    f_thread = nullptr;
-
-    flash_btn.set_sensitive();
 }
