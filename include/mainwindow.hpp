@@ -2,6 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include "terminalview.hpp"
+#include "gtkmm_log.hpp"
 
 #include <fstream>
 
@@ -57,6 +58,8 @@ private:
     Gtk::ScrolledWindow log_scrol;
 
     std::ofstream log;
+
+    KonstantIMP::gtkmm_log logger;
 };
 
 #endif // MAINWINDOW_HPP

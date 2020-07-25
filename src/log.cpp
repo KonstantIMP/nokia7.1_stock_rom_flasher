@@ -21,7 +21,8 @@ std::string log::get_datetime() const {
 
     strftime(buffer, sizeof (buffer), "%d.%m.%y %H:%M:%S", timeinfo);
 
-    std::cout << buffer;
+    // For function debug
+    // std::cout << buffer;
 
     return std::string(buffer);
 }

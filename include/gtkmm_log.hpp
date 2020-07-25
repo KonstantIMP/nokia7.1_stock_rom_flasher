@@ -10,7 +10,7 @@ namespace KonstantIMP {
     public:
         gtkmm_log(std::ostream *, Gtk::TextView *);
 
-        virtual void make_record(const std::string);
+        virtual void make_record(const std::string &);
 
     protected:
         Gtk::TextView * log_viewer;
