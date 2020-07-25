@@ -1,11 +1,8 @@
 #include "../include/mainwindow.hpp"
-#include "../include/log.hpp"
 
 #include <gtkmm.h>
 
 int main(int argc, char * argv[]) {
-    KonstantIMP::log a(&(std::cout));
-
     Glib::RefPtr<Gtk::Application> nokia_tool = Gtk::Application::create(argc, argv, "org.gtkmm.base");
 
     MainWindow win;

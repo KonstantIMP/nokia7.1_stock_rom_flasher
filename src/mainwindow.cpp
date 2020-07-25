@@ -12,27 +12,11 @@
     const std::string prf = "[WINDOWS]";
 #endif
 
-MainWindow::MainWindow() : logger(&log, &log_text) {
-    this->set_title("Nokia 7.1 stock rom flasher");
-    this->set_icon(Gdk::Pixbuf::create_from_resource("/nokia/icons8-circled-n-50.png"));
-
-    flash_btn.set_label("Flash Nokia 7.1");
-
+MainWindow::MainWindow() : logger(&log, &log_viewer), f_thread(nullptr) {
     this->create_ui();
+    this->connect_sig();
 
     term.set_prefix(prf);
-
-    adb_msg.set_text("ADB path :");
-    rom_msg.set_text("ROM path :");
-
-    adb_btn.set_label("Get ADB");
-    rom_btn.set_label("Get ROM");
-    info_btn.set_label("HELP");
-
-    log_msg.set_text("Flasher LOGs :");
-
-    set_adb_btn.set_label("...");
-    set_rom_btn.set_label("...");
 
     log.open("nokia7.1_flash.log", std::ios_base::app);
 
@@ -42,13 +26,10 @@ MainWindow::MainWindow() : logger(&log, &log_text) {
         logger.make_record("You use linux. ADB will be finded in the PATH");
 
         adb_en.set_text("PATH");
-        adb_en.set_editable(false);
 
-        set_adb_btn.set_can_focus(false);
-        set_adb_btn.set_visible(false);
+        adb_en.set_sensitive(false);
+        set_adb_btn.set_sensitive(false);
     }
-
-    this->connect_sig();
 
     term.print_message("Set your phone to Download mode");
 }
@@ -59,47 +40,64 @@ MainWindow::~MainWindow() {
     log.close();
 }
 
-void MainWindow::create_ui() {
-    this->set_border_width(10);
+void MainWindow::notify() {
+    f_dispatcher.emit();
+}
 
+void MainWindow::create_ui() {
+    this->set_icon(Gdk::Pixbuf::create_from_resource("/nokia/icons8-circled-n-50.png"));
+    this->set_title("Nokia 7.1 stock rom flasher");
+    this->set_border_width(10);
     this->add(main_grid);
 
-    log_msg.set_alignment(0);
+    flash_btn.set_label("Flash Nokia 7.1");
 
-    terminal_scrol.add(term);
+    main_grid.attach(flash_btn, 0, 9, 10, 1);
+
+    adb_msg.set_text("ADB path :");
+    rom_msg.set_text("ROM path :");
 
     main_grid.attach(adb_msg, 0, 0, 3, 1);
     main_grid.attach(rom_msg, 0, 1, 3, 1);
+
+    log_msg.set_alignment(0);
+    log_msg.set_text("Flasher LOGs :");
+
+    main_grid.attach(log_msg, 0, 3, 10, 1);
+
+    info_btn.set_label("HELP");
+    adb_btn.set_label("Get ADB");
+    rom_btn.set_label("Get ROM");
 
     main_grid.attach(adb_btn, 0, 2, 4, 1);
     main_grid.attach(rom_btn, 4, 2, 4, 1);
     main_grid.attach(info_btn, 8, 2, 2, 1);
 
-    main_grid.attach(log_msg, 0, 3, 10, 1);
-
-    log_scrol.add(log_text);
-
-    main_grid.attach(log_scrol, 0, 4, 10, 4);
-
-    main_grid.attach(terminal_scrol, 10, 0, 11, 10);
-
-    main_grid.attach(load_bar, 0, 8, 10, 1);
-    main_grid.attach(flash_btn, 0, 9, 10, 1);
-
-    main_grid.attach(adb_en, 3, 0, 6, 1);
-    main_grid.attach(rom_en, 3, 1, 6, 1);
+    set_adb_btn.set_label("...");
+    set_rom_btn.set_label("...");
 
     main_grid.attach(set_adb_btn, 9, 0, 1, 1);
     main_grid.attach(set_rom_btn, 9, 1, 1, 1);
 
-    main_grid.set_row_homogeneous(true);
-    main_grid.set_column_homogeneous(true);
+    log_viewer.set_left_margin(3);
+    log_viewer.set_border_width(2);
+
+    log_scrol.add(log_viewer);
+    main_grid.attach(log_scrol, 0, 4, 10, 4);
+
+    terminal_scrol.add(term);
+    main_grid.attach(terminal_scrol, 10, 0, 11, 10);
+
+    main_grid.attach(adb_en, 3, 0, 6, 1);
+    main_grid.attach(rom_en, 3, 1, 6, 1);
+
+    main_grid.attach(load_bar, 0, 8, 10, 1);
 
     main_grid.set_row_spacing(5);
     main_grid.set_column_spacing(5);
 
-    log_text.set_left_margin(3);
-    log_text.set_border_width(2);
+    main_grid.set_row_homogeneous(true);
+    main_grid.set_column_homogeneous(true);
 }
 
 void MainWindow::connect_sig() {
@@ -112,6 +110,8 @@ void MainWindow::connect_sig() {
     set_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::set_rom_path));
 
     flash_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::start_flash));
+
+    f_dispatcher.connect(sigc::mem_fun(*this, &MainWindow::flash_finished_sig));
 }
 
 void MainWindow::on_adb_clicked() {
@@ -406,4 +406,13 @@ void MainWindow::start_flash() {
     logger.make_record("Flash finished");
 
     load_bar.set_fraction(1.f);
+}
+
+void MainWindow::flash_finished_sig() {
+    if(f_thread != nullptr) {
+        if(f_thread->joinable()) f_thread->join();
+    }
+    f_thread = nullptr;
+
+    flash_btn.set_sensitive();
 }
