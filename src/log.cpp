@@ -7,7 +7,7 @@ log::log(std::ostream * out) : os(out) {
 }
 
 void log::make_record(const std::string & record) {
-    *os << '[' << this->get_datetime() << "] " << record << "\r\n";
+    *os << '[' << this->get_datetime() << "] " << record << "\r\n" << std::flush;
 }
 
 std::string log::get_datetime() const {
