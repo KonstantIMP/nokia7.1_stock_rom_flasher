@@ -2,8 +2,11 @@
 #define MAINWINDOW_HPP
 
 #include "terminalview.hpp"
+#include "flasher.hpp"
 
 #include <fstream>
+
+#include <thread>
 
 #include <gtkmm.h>
 
@@ -26,6 +29,10 @@ protected:
     void set_rom_path();
 
     void start_flash();
+
+    void work_done();
+
+    void update_widgets();
 
 private:
     Gtk::Label adb_msg;
@@ -57,6 +64,12 @@ private:
     Gtk::ScrolledWindow log_scrol;
 
     std::ofstream log;
+
+    std::thread * flash_t;
+
+    Glib::Dispatcher work_d;
+
+    Flasher worker;
 };
 
 #endif // MAINWINDOW_HPP

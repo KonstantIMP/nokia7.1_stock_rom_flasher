@@ -13,7 +13,7 @@ public:
 
     double get_fraction();
 
-    void do_work(const Glib::ustring &, const Glib::ustring &);
+    void do_work(const Glib::ustring &, const Glib::ustring &, Glib::Dispatcher *);
 
 private:
     TerminalView * term;

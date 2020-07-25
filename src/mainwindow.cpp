@@ -6,7 +6,7 @@
 
 #include <array>
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow() : flash_t(nullptr), worker(&term, &log, &log_text) {
     this->set_title("Nokia 7.1 stock rom flasher");
     this->set_icon(Gdk::Pixbuf::create_from_resource("/nokia/icons8-circled-n-50.png"));
 
@@ -115,6 +115,8 @@ void MainWindow::connect_sig() {
     set_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::set_rom_path));
 
     flash_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::start_flash));
+
+    work_d.connect(sigc::mem_fun(*this, &MainWindow::work_done));
 }
 
 void MainWindow::on_adb_clicked() {
@@ -169,5 +171,27 @@ void MainWindow::set_rom_path() {
 }
 
 void MainWindow::start_flash() {
+    flash_btn.set_sensitive(false);
 
+    flash_t = new std::thread([&](){
+        worker.do_work(adb_en.get_text(), rom_en.get_text(), &work_d);
+    });
+}
+
+void MainWindow::work_done() {
+    if(flash_t->joinable()) flash_t->join();
+    flash_btn.set_sensitive(true);
+    this->update_widgets();
+}
+
+void MainWindow::update_widgets() {
+    load_bar.set_fraction(worker.get_fraction());
+
+    /*auto mark = log_text.get_buffer()->get_mark("last_line");
+    log_text.get_buffer()->move_mark(mark, log_text.get_buffer()->end());
+    log_text.scroll_to(mark);
+
+    auto mark1 = term.get_buffer()->get_mark("last_line");
+    term.get_buffer()->move_mark(mark1, term.get_buffer()->end());
+    term.scroll_to(mark1);*/
 }
