@@ -5,6 +5,12 @@
 
 #include <string>
 
+#ifdef __linux
+    const std::string os = " LINUX ";
+#else
+    const std::string os = "WINDOWS";
+#endif
+
 class MainWindow : public Gtk::Window {
 public:
     MainWindow();
@@ -33,6 +39,8 @@ private:
 
     Gtk::Entry adb_path_en;
     Gtk::Entry rom_path_en;
+
+    Gtk::ProgressBar flash_load;
 };
 
 #endif // MAINWINDOW_HPP
