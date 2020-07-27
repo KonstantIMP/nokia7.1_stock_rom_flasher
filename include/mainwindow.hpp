@@ -29,6 +29,8 @@ protected:
 
     void start_flash();
 
+    void work_done();
+
 private:
     Gtk::Grid main_grid;
 
@@ -59,6 +61,9 @@ private:
 
     KonstantIMP::gtkmm_log logger;
     std::ofstream log;
+
+    std::thread * work_thread;
+    Glib::Dispatcher work_dicpathcer;
 };
 
 #endif // MAINWINDOW_HPP

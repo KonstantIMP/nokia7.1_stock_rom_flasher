@@ -12,7 +12,7 @@
     const std::string prf = "[WINDOWS]";
 #endif
 
-MainWindow::MainWindow() : logger(&log, &log_viewer) {
+MainWindow::MainWindow() : logger(&log, &log_viewer), work_thread(nullptr) {
     this->create_ui();
     this->connect_sig();
 
@@ -106,6 +106,8 @@ void MainWindow::connect_sig() {
     set_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::set_rom_path));
 
     flash_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::start_flash));
+
+    work_dicpathcer.connect(sigc::mem_fun(*this, &MainWindow::work_done));
 }
 
 void MainWindow::on_adb_clicked() {
@@ -159,11 +161,13 @@ void MainWindow::set_rom_path() {
 }
 
 void MainWindow::start_flash() {
+    flash_btn.set_sensitive(false);
+
     Glib::ustring fastboot = "", adb = "";
 
     std::ifstream checker;
 
-    load_bar.set_fraction(0.f);
+    //load_bar.set_fraction(0.f);
 
     logger.make_record("Flash started");
 
@@ -184,6 +188,7 @@ void MainWindow::start_flash() {
         if(!checker.is_open()) {
             logger.make_record("[ERROR] can\'t find ADB");
 
+            work_dicpathcer.emit();
             return;
         }
         checker.close();
@@ -194,12 +199,13 @@ void MainWindow::start_flash() {
 
             checker.close();
 
+            work_dicpathcer.emit();
             return;
         }
         checker.close();
     }
 
-    load_bar.set_fraction(0.01);
+    //load_bar.set_fraction(0.01);
 
     std::array<std::string, 23> images {"abl.img", "xbl.img", "bluetooth.img",
                                          "boot.img", "cda.img", "cmnlib.img",
@@ -211,13 +217,14 @@ void MainWindow::start_flash() {
                                          "tz.img", "vendor.img"};
 
     for(std::size_t i{0}; i < images.size(); i++) {
-        checker.open(rom_en.get_text() + "/" + images[i]);
+        checker.open(rom_en.get_text() + "/" + images[i], std::ios_base::in | std::ios_base::binary);
 
         if(!checker.is_open()) {
             logger.make_record("[ERROR] checking " + std::to_string(i + 1) + '/' + std::to_string(images.size()) + ' ' + images[i] + " - not founded");
 
             checker.close();
 
+            work_dicpathcer.emit();
             return;
         }
 
@@ -226,178 +233,189 @@ void MainWindow::start_flash() {
         checker.close();
     }
 
-    load_bar.set_fraction(0.09);
+    work_thread = new std::thread([&](){
+        //load_bar.set_fraction(0.09);
 
-    logger.make_record("Work with fastboot");
+        logger.make_record("Work with fastboot");
 
-    logger.make_record("Flash abl_a");
-    term.run_process(fastboot + " flash abl_a \"" + rom_en.get_text() + "/abl.img\"");
+        logger.make_record("Flash abl_a");
+        term.run_process(fastboot + " flash abl_a \"" + rom_en.get_text() + "/abl.img\"");
 
-    load_bar.set_fraction(0.13);
+        //load_bar.set_fraction(0.13);
 
-    logger.make_record("Flash abl_b");
-    term.run_process(fastboot + " flash abl_b \"" + rom_en.get_text() + "/abl.img\"");
+        logger.make_record("Flash abl_b");
+        term.run_process(fastboot + " flash abl_b \"" + rom_en.get_text() + "/abl.img\"");
 
-    load_bar.set_fraction(0.15);
+        //load_bar.set_fraction(0.15);
 
-    logger.make_record("Flash xbl_a");
-    term.run_process(fastboot + " flash xbl_a \"" + rom_en.get_text() + "/xbl.img\"");
+        logger.make_record("Flash xbl_a");
+        term.run_process(fastboot + " flash xbl_a \"" + rom_en.get_text() + "/xbl.img\"");
 
-    load_bar.set_fraction(0.17);
+        //load_bar.set_fraction(0.17);
 
-    logger.make_record("Flash xbl_b");
-    term.run_process(fastboot + " flash xbl_b \"" + rom_en.get_text() + "/xbl.img\"");
+        logger.make_record("Flash xbl_b");
+        term.run_process(fastboot + " flash xbl_b \"" + rom_en.get_text() + "/xbl.img\"");
 
-    load_bar.set_fraction(0.20);
+        //load_bar.set_fraction(0.20);
 
-    logger.make_record("Flash bluetooth_a");
-    term.run_process(fastboot + " flash bluetooth_a \"" + rom_en.get_text() + "/bluetooth.img\"");
+        logger.make_record("Flash bluetooth_a");
+        term.run_process(fastboot + " flash bluetooth_a \"" + rom_en.get_text() + "/bluetooth.img\"");
 
-    load_bar.set_fraction(0.21);
+        //load_bar.set_fraction(0.21);
 
-    logger.make_record("Flash boot_a");
-    term.run_process(fastboot + " flash boot_a \"" + rom_en.get_text() + "/boot.img\"");
+        logger.make_record("Flash boot_a");
+        term.run_process(fastboot + " flash boot_a \"" + rom_en.get_text() + "/boot.img\"");
 
-    load_bar.set_fraction(0.22);
+        //load_bar.set_fraction(0.22);
 
-    logger.make_record("Flash cda_a");
-    term.run_process(fastboot + " flash cda_a \"" + rom_en.get_text() + "/cda.img\"");
+        logger.make_record("Flash cda_a");
+        term.run_process(fastboot + " flash cda_a \"" + rom_en.get_text() + "/cda.img\"");
 
-    load_bar.set_fraction(0.23);
+        //load_bar.set_fraction(0.23);
 
-    logger.make_record("Flash cmnlib_a");
-    term.run_process(fastboot + " flash cmnlib_a \"" + rom_en.get_text() + "/cmnlib.img\"");
+        logger.make_record("Flash cmnlib_a");
+        term.run_process(fastboot + " flash cmnlib_a \"" + rom_en.get_text() + "/cmnlib.img\"");
 
-    load_bar.set_fraction(0.25);
+        //load_bar.set_fraction(0.25);
 
-    logger.make_record("Flash cmnlib64_a");
-    term.run_process(fastboot + " flash cmnlib64_a \"" + rom_en.get_text() + "/cmnlib64.img\"");
+        logger.make_record("Flash cmnlib64_a");
+        term.run_process(fastboot + " flash cmnlib64_a \"" + rom_en.get_text() + "/cmnlib64.img\"");
 
-    load_bar.set_fraction(0.26);
+        //load_bar.set_fraction(0.26);
 
-    logger.make_record("Flash devcfg_a");
-    term.run_process(fastboot + " flash devcfg_a \"" + rom_en.get_text() + "/devcfg.img\"");
+        logger.make_record("Flash devcfg_a");
+        term.run_process(fastboot + " flash devcfg_a \"" + rom_en.get_text() + "/devcfg.img\"");
 
-    load_bar.set_fraction(0.28);
+        //load_bar.set_fraction(0.28);
 
-    logger.make_record("Flash dsp_a");
-    term.run_process(fastboot + " flash dsp_a \"" + rom_en.get_text() + "/dsp.img\"");
+        logger.make_record("Flash dsp_a");
+        term.run_process(fastboot + " flash dsp_a \"" + rom_en.get_text() + "/dsp.img\"");
 
-    load_bar.set_fraction(0.29);
+        //load_bar.set_fraction(0.29);
 
-    logger.make_record("Flash hidden_a");
-    term.run_process(fastboot + " flash hidden_a \"" + rom_en.get_text() + "/hidden.img\"");
+        logger.make_record("Flash hidden_a");
+        term.run_process(fastboot + " flash hidden_a \"" + rom_en.get_text() + "/hidden.img\"");
 
-    load_bar.set_fraction(0.31);
+        //load_bar.set_fraction(0.31);
 
-    logger.make_record("Flash hyp_a");
-    term.run_process(fastboot + " flash hyp_a \"" + rom_en.get_text() + "/hyp.img\"");
+        logger.make_record("Flash hyp_a");
+        term.run_process(fastboot + " flash hyp_a \"" + rom_en.get_text() + "/hyp.img\"");
 
-    load_bar.set_fraction(0.32);
+        //load_bar.set_fraction(0.32);
 
-    logger.make_record("Flash keymaster_a");
-    term.run_process(fastboot + " flash keymaster_a \"" + rom_en.get_text() + "/keymaster.img\"");
+        logger.make_record("Flash keymaster_a");
+        term.run_process(fastboot + " flash keymaster_a \"" + rom_en.get_text() + "/keymaster.img\"");
 
-    load_bar.set_fraction(0.35);
+        //load_bar.set_fraction(0.35);
 
-    logger.make_record("Flash mdtp_a");
-    term.run_process(fastboot + " flash mdtp_a \"" + rom_en.get_text() + "/mdtp.img\"");
+        logger.make_record("Flash mdtp_a");
+        term.run_process(fastboot + " flash mdtp_a \"" + rom_en.get_text() + "/mdtp.img\"");
 
-    load_bar.set_fraction(0.37);
+        //load_bar.set_fraction(0.37);
 
-    logger.make_record("Flash mdtpsecapp_a");
-    term.run_process(fastboot + " flash mdtpsecapp_a \"" + rom_en.get_text() + "/mdtpsecapp.img\"");
+        logger.make_record("Flash mdtpsecapp_a");
+        term.run_process(fastboot + " flash mdtpsecapp_a \"" + rom_en.get_text() + "/mdtpsecapp.img\"");
 
-    load_bar.set_fraction(0.40);
+        //load_bar.set_fraction(0.40);
 
-    logger.make_record("Flash modem_a");
-    term.run_process(fastboot + " flash modem_a \"" + rom_en.get_text() + "/modem.img\"");
+        logger.make_record("Flash modem_a");
+        term.run_process(fastboot + " flash modem_a \"" + rom_en.get_text() + "/modem.img\"");
 
-    load_bar.set_fraction(0.41);
+        //load_bar.set_fraction(0.41);
 
-    logger.make_record("Flash nvdef_a");
-    term.run_process(fastboot + " flash nvdef_a \"" + rom_en.get_text() + "/nvdef.img\"");
+        logger.make_record("Flash nvdef_a");
+        term.run_process(fastboot + " flash nvdef_a \"" + rom_en.get_text() + "/nvdef.img\"");
 
-    load_bar.set_fraction(0.43);
+        //load_bar.set_fraction(0.43);
 
-    logger.make_record("Flash pmic_a");
-    term.run_process(fastboot + " flash pmic_a \"" + rom_en.get_text() + "/pmic.img\"");
+        logger.make_record("Flash pmic_a");
+        term.run_process(fastboot + " flash pmic_a \"" + rom_en.get_text() + "/pmic.img\"");
 
-    load_bar.set_fraction(0.46);
+        //load_bar.set_fraction(0.46);
 
-    logger.make_record("Flash rpm_a");
-    term.run_process(fastboot + " flash rpm_a \"" + rom_en.get_text() + "/rpm.img\"");
+        logger.make_record("Flash rpm_a");
+        term.run_process(fastboot + " flash rpm_a \"" + rom_en.get_text() + "/rpm.img\"");
 
-    load_bar.set_fraction(0.48);
+        //load_bar.set_fraction(0.48);
 
-    logger.make_record("Flash splash_a");
-    term.run_process(fastboot + " flash splash_a \"" + rom_en.get_text() + "/splash.img\"");
+        logger.make_record("Flash splash_a");
+        term.run_process(fastboot + " flash splash_a \"" + rom_en.get_text() + "/splash.img\"");
 
-    load_bar.set_fraction(0.50);
+        //load_bar.set_fraction(0.50);
 
-    logger.make_record("Flash system_a");
-    term.run_process(fastboot + " flash system_a \"" + rom_en.get_text() + "/system.img\"");
+        logger.make_record("Flash system_a");
+        term.run_process(fastboot + " flash system_a \"" + rom_en.get_text() + "/system.img\"");
 
-    load_bar.set_fraction(0.70);
+        //load_bar.set_fraction(0.70);
 
-    logger.make_record("Flash systeminfo_a");
-    term.run_process(fastboot + " flash systeminfo_a \"" + rom_en.get_text() + "/systeminfo.img\"");
+        logger.make_record("Flash systeminfo_a");
+        term.run_process(fastboot + " flash systeminfo_a \"" + rom_en.get_text() + "/systeminfo.img\"");
 
-    load_bar.set_fraction(0.73);
+        //load_bar.set_fraction(0.73);
 
-    logger.make_record("Flash tz_a");
-    term.run_process(fastboot + " flash tz_a \"" + rom_en.get_text() + "/tz.img\"");
+        logger.make_record("Flash tz_a");
+        term.run_process(fastboot + " flash tz_a \"" + rom_en.get_text() + "/tz.img\"");
 
-    load_bar.set_fraction(0.75);
+        //load_bar.set_fraction(0.75);
 
-    logger.make_record("Flash vendor_a");
-    term.run_process(fastboot + " flash vendor_a \"" + rom_en.get_text() + "/vendor.img\"");
+        logger.make_record("Flash vendor_a");
+        term.run_process(fastboot + " flash vendor_a \"" + rom_en.get_text() + "/vendor.img\"");
 
-    load_bar.set_fraction(0.80);
+        //load_bar.set_fraction(0.80);
 
-    logger.make_record("Erase ssd");
-    term.run_process(fastboot + " erase ssd ");
+        logger.make_record("Erase ssd");
+        term.run_process(fastboot + " erase ssd ");
 
-    logger.make_record("Erase misc");
-    term.run_process(fastboot + " erase misc ");
+        logger.make_record("Erase misc");
+        term.run_process(fastboot + " erase misc ");
 
-    load_bar.set_fraction(0.83);
+        //load_bar.set_fraction(0.83);
 
-    logger.make_record("Erase sti");
-    term.run_process(fastboot + " erase sti ");
+        logger.make_record("Erase sti");
+        term.run_process(fastboot + " erase sti ");
 
-    load_bar.set_fraction(0.85);
+        //load_bar.set_fraction(0.85);
 
-    logger.make_record("Erase ddr");
-    term.run_process(fastboot + " erase ddr ");
+        logger.make_record("Erase ddr");
+        term.run_process(fastboot + " erase ddr ");
 
-    logger.make_record("Erase securefs");
-    term.run_process(fastboot + " erase securefs ");
+        logger.make_record("Erase securefs");
+        term.run_process(fastboot + " erase securefs ");
 
-    logger.make_record("Erase box");
-    term.run_process(fastboot + " erase box ");
+        logger.make_record("Erase box");
+        term.run_process(fastboot + " erase box ");
 
-    load_bar.set_fraction(0.87);
+        //load_bar.set_fraction(0.87);
 
-    logger.make_record("Erase boot_b");
-    term.run_process(fastboot + " erase boot_b ");
+        logger.make_record("Erase boot_b");
+        term.run_process(fastboot + " erase boot_b ");
 
-    load_bar.set_fraction(0.90);
+        //load_bar.set_fraction(0.90);
 
-    logger.make_record("Set \'A\' as active slot");
-    term.run_process(fastboot + " --set-active=a");
+        logger.make_record("Set \'A\' as active slot");
+        term.run_process(fastboot + " --set-active=a");
 
-    load_bar.set_fraction(0.95);
+        //load_bar.set_fraction(0.95);
 
-    logger.make_record("Factory reset");
-    term.run_process(fastboot + " -w");
+        logger.make_record("Factory reset");
+        term.run_process(fastboot + " -w");
 
-    load_bar.set_fraction(0.99);
+        //load_bar.set_fraction(0.99);
 
-    logger.make_record("Reboot");
-    term.run_process(fastboot + " reboot");
+        logger.make_record("Reboot");
+        term.run_process(fastboot + " reboot");
 
-    logger.make_record("Flash finished");
+        logger.make_record("Flash finished");
 
-    load_bar.set_fraction(1.f);
+        //load_bar.set_fraction(1.f);
+
+        work_dicpathcer.emit();
+    });
+}
+
+void MainWindow::work_done() {
+    if(work_thread->joinable()) work_thread->join();
+    delete work_thread; work_thread = nullptr;
+
+    flash_btn.set_sensitive();
 }
