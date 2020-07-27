@@ -1,15 +1,12 @@
 #include "../include/mainwindow.hpp"
 
-#include <gtkmm.h>
-
 int main(int argc, char * argv[]) {
-    Glib::RefPtr<Gtk::Application> nokia_tool = Gtk::Application::create(argc, argv, "org.gtkmm.base");
+    auto nokia = Gtk::Application::create(argc, argv, "org.nokia.flasher.base");
 
-    MainWindow win;
+    MainWindow m_win;
 
-    win.show_all();
+    m_win.show_all();
 
-    nokia_tool->run(win);
-
-    return 0;
+    return nokia->run(m_win);
 }
+
