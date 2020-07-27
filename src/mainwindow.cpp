@@ -1,10 +1,14 @@
 #include "../include/mainwindow.hpp"
 
-MainWindow::MainWindow() {
+namespace KonstantIMP {
+
+MainWindow::MainWindow() : log_file(log_name, std::ios_base::app) , logger(&log_file) {
     this->set_title("Nokia7.1 Stock Rom Flasher");
 
     create_ui();
     connect_signals();
+
+    for(int i{0}; i < 20; i++) logger.make_record("Program start");
 }
 
 MainWindow::~MainWindow()
@@ -56,6 +60,8 @@ void MainWindow::create_ui() {
 
     main_grid.attach(flash_btn, 9, 8, 9, 1);
 
+    main_grid.attach(logger, 0, 4, 9, 4);
+
     this->set_border_width(10);
     main_grid.set_row_spacing(10);
     main_grid.set_column_spacing(10);
@@ -70,3 +76,5 @@ void MainWindow::connect_signals()
 {
 
 }
+
+};

@@ -1,15 +1,22 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include "gtkmm_log.hpp"
+
+#include <fstream>
 #include <gtkmm.h>
 
 #include <string>
+
+namespace KonstantIMP {
 
 #ifdef __linux
     const std::string os = " LINUX ";
 #else
     const std::string os = "WINDOWS";
 #endif
+
+const std::string log_name = "nokia7.1_flash.log";
 
 class MainWindow : public Gtk::Window {
 public:
@@ -41,6 +48,11 @@ private:
     Gtk::Entry rom_path_en;
 
     Gtk::ProgressBar flash_load;
+
+    std::ofstream log_file;
+    KonstantIMP::gtkmm_log logger;
+};
+
 };
 
 #endif // MAINWINDOW_HPP
