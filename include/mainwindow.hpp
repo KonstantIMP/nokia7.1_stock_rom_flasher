@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_HPP
 #define MAINWINDOW_HPP
 
+#include "terminal_view.hpp"
 #include "gtkmm_log.hpp"
 
 #include <fstream>
@@ -51,6 +52,8 @@ private:
 
     std::ofstream log_file;
     KonstantIMP::gtkmm_log logger;
+
+    KonstantIMP::terminal_view term;
 };
 
 };

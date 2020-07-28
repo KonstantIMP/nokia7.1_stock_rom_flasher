@@ -2,18 +2,20 @@
 
 namespace KonstantIMP {
 
-MainWindow::MainWindow() : log_file(log_name, std::ios_base::app) , logger(&log_file) {
+MainWindow::MainWindow() : log_file(log_name, std::ios_base::app) , logger(&log_file), term(KonstantIMP::os) {
     this->set_title("Nokia7.1 Stock Rom Flasher");
 
     create_ui();
     connect_signals();
 
-    for(int i{0}; i < 20; i++) logger.make_record("Program start");
+    logger.make_record("Program started");
+
+    term.run_process("nano --help");
 }
 
-MainWindow::~MainWindow()
-{
-
+MainWindow::~MainWindow() {
+    logger.make_record("Program closed");
+    log_file.close();
 }
 
 void MainWindow::create_ui() {
@@ -41,13 +43,13 @@ void MainWindow::create_ui() {
 
     flash_btn.set_label("Flash Nokia 7.1");
 
-    main_grid.attach(adb_msg, 0, 0, 3, 1);
-    main_grid.attach(rom_msg, 0, 1, 3, 1);
+    main_grid.attach(adb_msg, 0, 0, 2, 1);
+    main_grid.attach(rom_msg, 0, 1, 2, 1);
     main_grid.attach(log_msg, 0, 3, 9, 1);
     main_grid.attach(cmd_msg, 9, 0, 9, 1);
 
-    main_grid.attach(adb_path_en, 3, 0, 5, 1);
-    main_grid.attach(rom_path_en, 3, 1, 5, 1);
+    main_grid.attach(adb_path_en, 2, 0, 6, 1);
+    main_grid.attach(rom_path_en, 2, 1, 6, 1);
 
     main_grid.attach(flash_load, 9, 7, 9, 1);
 
@@ -61,6 +63,7 @@ void MainWindow::create_ui() {
     main_grid.attach(flash_btn, 9, 8, 9, 1);
 
     main_grid.attach(logger, 0, 4, 9, 4);
+    main_grid.attach(term, 9, 1, 9, 6);
 
     this->set_border_width(10);
     main_grid.set_row_spacing(10);
