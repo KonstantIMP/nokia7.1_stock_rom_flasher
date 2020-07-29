@@ -29,12 +29,14 @@ protected:
     void create_ui();
     void connect_signals();
 
-    void on_set_adb_path_clicked();
-    void on_set_rom_path_clicked();
+    void on_flash_clicked();
 
     void on_get_adb_clicked();
     void on_get_rom_clicked();
     void on_get_info_clicked();
+
+    void on_set_adb_path_clicked();
+    void on_set_rom_path_clicked();
 
 private:
     Gtk::Grid main_grid;

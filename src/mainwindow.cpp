@@ -82,28 +82,41 @@ void MainWindow::create_ui() {
 }
 
 void MainWindow::connect_signals() {
-    set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clicked));
-    set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clicked));
+    flash_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_flash_clicked));
 
     get_adb_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_adb_clicked));
     get_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_rom_clicked));
     get_info_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_info_clicked));
+
+    set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clicked));
+    set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clicked));
 }
 
-void MainWindow::on_set_adb_path_clicked() {
-    Gtk::FileChooserDialog adb_path(*this, "Set ADB path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    adb_path.add_button("Cancel", Gtk::RESPONSE_NO);
-    adb_path.add_button("OK", Gtk::RESPONSE_OK);
+void MainWindow::on_flash_clicked() {
+    flash_load.set_fraction(0.f);
 
-    if(adb_path.run() == Gtk::RESPONSE_OK) adb_path_en.set_text(adb_path.get_filename());
-}
+    if(adb_path_en.get_text() == "") {
+        logger.make_record("[ERROR] You must set PATH to ADB");
+        return;
+    }
 
-void MainWindow::on_set_rom_path_clicked() {
-    Gtk::FileChooserDialog rom_path(*this, "Set ROM path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    rom_path.add_button("Cancel", Gtk::RESPONSE_NO);
-    rom_path.add_button("OK", Gtk::RESPONSE_OK);
+    if(os == "WINDOWS") {
+        std::ifstream checker;
 
-    if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
+        checker.open(adb_path_en.get_text() + "\\adb.exe", std::ios_base::in | std::ios_base::binary);
+        if(!checker.is_open()) {
+            logger.make_record("[ERROR] Can\'t find adb.exe");
+            return;
+        } checker.close();
+
+        checker.open(adb_path_en.get_text() + "\\fastboot.exe", std::ios_base::in | std::ios_base::binary);
+        if(!checker.is_open()) {
+            logger.make_record("[ERROR] Can\'t find fastboot.exe");
+            return;
+        } checker.close();
+    }
+
+    logger.make_record("platform-tools was founded");
 }
 
 void MainWindow::on_get_adb_clicked() {
@@ -153,6 +166,22 @@ void MainWindow::on_get_info_clicked() {
     about.set_website("https://github.com/KonstantIMP/nokia7.1_stock_rom_flasher");
 
     about.run();
+}
+
+void MainWindow::on_set_adb_path_clicked() {
+    Gtk::FileChooserDialog adb_path(*this, "Set ADB path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    adb_path.add_button("Cancel", Gtk::RESPONSE_NO);
+    adb_path.add_button("OK", Gtk::RESPONSE_OK);
+
+    if(adb_path.run() == Gtk::RESPONSE_OK) adb_path_en.set_text(adb_path.get_filename());
+}
+
+void MainWindow::on_set_rom_path_clicked() {
+    Gtk::FileChooserDialog rom_path(*this, "Set ROM path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
+    rom_path.add_button("Cancel", Gtk::RESPONSE_NO);
+    rom_path.add_button("OK", Gtk::RESPONSE_OK);
+
+    if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
 }
 
 };
