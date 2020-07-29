@@ -4,6 +4,7 @@ namespace KonstantIMP {
 
 MainWindow::MainWindow() : log_file(log_name, std::ios_base::app) , logger(&log_file), term(KonstantIMP::os) {
     this->set_title("Nokia7.1 Stock Rom Flasher");
+    this->set_icon(Gdk::Pixbuf::create_from_resource("/nokia/logo.png"));
 
     create_ui();
     connect_signals();
@@ -114,8 +115,9 @@ void MainWindow::on_get_help_clicked() {
     about.set_website_label("Github project repository");
     about.set_program_name("nokia7.1_stock_rom_flasher");
     about.set_authors(std::vector<Glib::ustring>{"KonstantIMP"});
-    about.set_website("https://github.com/KonstantIMP/nokia7.1_stock_rom_flasher");
+    about.set_logo(Gdk::Pixbuf::create_from_resource("/nokia/logo.png"));
     about.set_comments("This is an app to flash your Nokia 7.1 to stock rom");
+    about.set_website("https://github.com/KonstantIMP/nokia7.1_stock_rom_flasher");
 
     about.run();
 }
