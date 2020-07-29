@@ -82,15 +82,15 @@ void MainWindow::create_ui() {
 }
 
 void MainWindow::connect_signals() {
-    set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clocked));
-    set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clocked));
+    set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clicked));
+    set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clicked));
 
-    get_adb_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_adb_clocked));
-
+    get_adb_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_adb_clicked));
+    get_rom_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_rom_clicked));
     get_info_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_info_clicked));
 }
 
-void MainWindow::on_set_adb_path_clocked() {
+void MainWindow::on_set_adb_path_clicked() {
     Gtk::FileChooserDialog adb_path(*this, "Set ADB path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     adb_path.add_button("Cancel", Gtk::RESPONSE_NO);
     adb_path.add_button("OK", Gtk::RESPONSE_OK);
@@ -98,7 +98,7 @@ void MainWindow::on_set_adb_path_clocked() {
     if(adb_path.run() == Gtk::RESPONSE_OK) adb_path_en.set_text(adb_path.get_filename());
 }
 
-void MainWindow::on_set_rom_path_clocked() {
+void MainWindow::on_set_rom_path_clicked() {
     Gtk::FileChooserDialog rom_path(*this, "Set ROM path", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
     rom_path.add_button("Cancel", Gtk::RESPONSE_NO);
     rom_path.add_button("OK", Gtk::RESPONSE_OK);
@@ -106,7 +106,7 @@ void MainWindow::on_set_rom_path_clocked() {
     if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
 }
 
-void MainWindow::on_get_adb_clocked() {
+void MainWindow::on_get_adb_clicked() {
     Gtk::MessageDialog get_adb(*this, "How to get ADB", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
 
     if(os == " LINUX ") {
@@ -125,6 +125,17 @@ void MainWindow::on_get_adb_clocked() {
     }
 
     get_adb.run();
+}
+
+void MainWindow::on_get_rom_clicked() {
+    Gtk::MessageDialog get_rom(*this, "Where you can find stock ROM", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+
+    get_rom.set_secondary_text("<b>Hello!</b>\r\n"
+                               "To flash your Nokia 7.1 you need download <i>stock ROM</i>\r\n"
+                               "You can download it from <a href=\"https://clck.ru/PxCLZ\">this website</a>\r\n"
+                               "Unarchive it adn set ROM PATH to it", true);
+
+    get_rom.run();
 }
 
 void MainWindow::on_get_info_clicked() {
