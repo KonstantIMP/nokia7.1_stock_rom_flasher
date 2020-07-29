@@ -83,6 +83,9 @@ void MainWindow::create_ui() {
 void MainWindow::connect_signals() {
     set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clocked));
     set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clocked));
+
+
+    get_help_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_help_clicked));
 }
 
 void MainWindow::on_set_adb_path_clocked() {
@@ -99,6 +102,22 @@ void MainWindow::on_set_rom_path_clocked() {
     rom_path.add_button("OK", Gtk::RESPONSE_OK);
 
     if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
+}
+
+void MainWindow::on_get_help_clicked() {
+    Gtk::AboutDialog about;
+    about.set_transient_for(*this);
+
+    about.set_license("LGPL");
+    about.set_version("1.0.2");
+    about.set_copyright("KonstantIMP");
+    about.set_website_label("Github project repository");
+    about.set_program_name("nokia7.1_stock_rom_flasher");
+    about.set_authors(std::vector<Glib::ustring>{"KonstantIMP"});
+    about.set_website("https://github.com/KonstantIMP/nokia7.1_stock_rom_flasher");
+    about.set_comments("This is an app to flash your Nokia 7.1 to stock rom");
+
+    about.run();
 }
 
 };

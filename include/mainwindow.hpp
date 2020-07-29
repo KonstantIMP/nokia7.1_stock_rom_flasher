@@ -32,6 +32,9 @@ protected:
     void on_set_adb_path_clocked();
     void on_set_rom_path_clocked();
 
+
+    void on_get_help_clicked();
+
 private:
     Gtk::Grid main_grid;
 
