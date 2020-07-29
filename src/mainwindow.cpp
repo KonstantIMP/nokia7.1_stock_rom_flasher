@@ -116,7 +116,38 @@ void MainWindow::on_flash_clicked() {
         } checker.close();
     }
 
+    flash_load.set_fraction(0.01);
     logger.make_record("platform-tools was founded");
+
+    if(rom_path_en.get_text() == "") {
+        logger.make_record("[ERROR] You must set PATH to ROM");
+        return;
+    }
+
+    logger.make_record("Checking images");
+
+    std::array<std::string, 23> images {
+        "abl.img", "bluetooth.img", "boot.img",
+        "cda.img", "cmnlib64.img", "cmnlib.img",
+        "devcfg.img", "dsp.img", "hidden.img",
+        "hyp.img", "keymaster.img", "mdtp.img",
+        "mdtpsecapp.img", "modem.img", "nvdef.img",
+        "pmic.img", "rpm.img", "splash.img",
+        "system.img", "systeminfo.img", "tz.img",
+        "vendor.img", "xbl.img"
+    };
+
+    for(std::size_t i{0}; i < images.size(); i++) {
+        std::ifstream checker(rom_path_en.get_text() + dir_sym + images[i], std::ios_base::in | std::ios_base::binary);
+        if(!checker.is_open()) {
+            logger.make_record(std::to_string(i + 1) + '/' + std::to_string(images.size()) + ' ' + images[i] + " - not found");
+            checker.close(); return;
+        } checker.close();
+        logger.make_record(std::to_string(i) + '/' + std::to_string(images.size()) + ' ' + images[i] + " - found");
+    }
+
+    flash_load.set_fraction(0.05);
+    logger.make_record("Checking done");
 }
 
 void MainWindow::on_get_adb_clicked() {

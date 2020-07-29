@@ -4,16 +4,21 @@
 #include "terminal_view.hpp"
 #include "gtkmm_log.hpp"
 
+#include <cstddef>
+
 #include <fstream>
 #include <gtkmm.h>
 
 #include <string>
+#include <array>
 
 namespace KonstantIMP {
 
 #ifdef __linux
+    const char dir_sym = '/';
     const std::string os = " LINUX ";
 #else
+    const char dir_sym = '\\';
     const std::string os = "WINDOWS";
 #endif
 
