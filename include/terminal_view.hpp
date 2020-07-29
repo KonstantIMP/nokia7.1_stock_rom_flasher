@@ -15,6 +15,8 @@ public:
 
     void run_process(const std::string &);
 
+    Glib::ustring get_buffer_text() const;
+
 private:
     Gtk::TextView terminal;
 

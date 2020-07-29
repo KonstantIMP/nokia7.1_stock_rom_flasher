@@ -34,4 +34,9 @@ void terminal_view::run_process(const std::string & command) {
     terminal.scroll_to(mark);
 }
 
+Glib::ustring terminal_view::get_buffer_text() const {
+    return terminal.get_buffer()->get_text();
+}
+
+
 };

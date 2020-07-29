@@ -93,6 +93,7 @@ void MainWindow::connect_signals() {
 }
 
 void MainWindow::on_flash_clicked() {
+    flash_btn.set_sensitive(false);
     flash_load.set_fraction(0.f);
 
     if(adb_path_en.get_text() == "") {
@@ -106,12 +107,14 @@ void MainWindow::on_flash_clicked() {
         checker.open(adb_path_en.get_text() + "\\adb.exe", std::ios_base::in | std::ios_base::binary);
         if(!checker.is_open()) {
             logger.make_record("[ERROR] Can\'t find adb.exe");
+            flash_btn.set_sensitive();
             return;
         } checker.close();
 
         checker.open(adb_path_en.get_text() + "\\fastboot.exe", std::ios_base::in | std::ios_base::binary);
         if(!checker.is_open()) {
             logger.make_record("[ERROR] Can\'t find fastboot.exe");
+            flash_btn.set_sensitive();
             return;
         } checker.close();
     }
@@ -121,6 +124,7 @@ void MainWindow::on_flash_clicked() {
 
     if(rom_path_en.get_text() == "") {
         logger.make_record("[ERROR] You must set PATH to ROM");
+        flash_btn.set_sensitive();
         return;
     }
 
@@ -141,6 +145,7 @@ void MainWindow::on_flash_clicked() {
         std::ifstream checker(rom_path_en.get_text() + dir_sym + images[i], std::ios_base::in | std::ios_base::binary);
         if(!checker.is_open()) {
             logger.make_record(std::to_string(i + 1) + '/' + std::to_string(images.size()) + ' ' + images[i] + " - not found");
+            flash_btn.set_sensitive();
             checker.close(); return;
         } checker.close();
         logger.make_record(std::to_string(i) + '/' + std::to_string(images.size()) + ' ' + images[i] + " - found");
@@ -148,6 +153,164 @@ void MainWindow::on_flash_clicked() {
 
     flash_load.set_fraction(0.05);
     logger.make_record("Checking done");
+
+    std::string adb = "", fastboot = "";
+
+    if(os == " LINUX ") {
+        fastboot = "sudo fastboot";
+        adb = "sudo adb";
+    }
+    else {
+        fastboot = adb_path_en.get_text() + "\\fastboot.exe";
+        adb = adb_path_en.get_text() + "\\adb.exe";
+    }
+
+    flash_load.set_fraction(0.07);
+
+    logger.make_record("Flashing abl_a");
+    term.run_process(fastboot + " flash abl_a " + rom_path_en.get_text() + dir_sym + "abl.img");
+
+
+    logger.make_record("Flashing abl_b");
+    term.run_process(fastboot + " flash abl_b " + rom_path_en.get_text() + dir_sym + "abl.img");
+
+
+    logger.make_record("Flashing xbl_a");
+    term.run_process(fastboot + " flash xbl_a " + rom_path_en.get_text() + dir_sym + "xbl.img");
+
+
+    logger.make_record("Flashing xbl_b");
+    term.run_process(fastboot + " flash xbl_b " + rom_path_en.get_text() + dir_sym + "xbl.img");
+
+
+    logger.make_record("Flashing bluetooth_a");
+    term.run_process(fastboot + " flash bluetooth_a " + rom_path_en.get_text() + dir_sym + "bluetooth.img");
+
+
+    logger.make_record("Flashing boot_a");
+    term.run_process(fastboot + " flash boot_a " + rom_path_en.get_text() + dir_sym + "boot.img");
+
+
+    logger.make_record("Flashing cda_a");
+    term.run_process(fastboot + " flash cda_a " + rom_path_en.get_text() + dir_sym + "cda.img");
+
+
+    logger.make_record("Flashing cmnlib_a");
+    term.run_process(fastboot + " flash cmnlib_a " + rom_path_en.get_text() + dir_sym + "cmnlib.img");
+
+
+    logger.make_record("Flashing cmnlib64_a");
+    term.run_process(fastboot + " flash cmnlib64_a " + rom_path_en.get_text() + dir_sym + "cmnlib64.img");
+
+
+    logger.make_record("Flashing devcfg_a");
+    term.run_process(fastboot + " flash devcfg_a " + rom_path_en.get_text() + dir_sym + "devcfg.img");
+
+
+    logger.make_record("Flashing dsp_a");
+    term.run_process(fastboot + " flash dsp_a " + rom_path_en.get_text() + dir_sym + "dsp.img");
+
+
+    logger.make_record("Flashing hidden_a");
+    term.run_process(fastboot + " flash hidden_a " + rom_path_en.get_text() + dir_sym + "hidden.img");
+
+
+    logger.make_record("Flashing hyp_a");
+    term.run_process(fastboot + " flash hyp_a " + rom_path_en.get_text() + dir_sym + "hyp.img");
+
+
+    logger.make_record("Flashing keymaster_a");
+    term.run_process(fastboot + " flash keymaster_a " + rom_path_en.get_text() + dir_sym + "keymaster.img");
+
+
+    logger.make_record("Flashing mdtp_a");
+    term.run_process(fastboot + " flash mdtp_a " + rom_path_en.get_text() + dir_sym + "mdtp.img");
+
+
+    logger.make_record("Flashing mdtpsecapp_a");
+    term.run_process(fastboot + " flash mdtpsecapp_a " + rom_path_en.get_text() + dir_sym + "mdtpsecapp.img");
+
+
+    logger.make_record("Flashing modem_a");
+    term.run_process(fastboot + " flash modem_a " + rom_path_en.get_text() + dir_sym + "modem.img");
+
+
+    logger.make_record("Flashing nvdef_a");
+    term.run_process(fastboot + " flash nvdef_a " + rom_path_en.get_text() + dir_sym + "nvdef.img");
+
+
+    logger.make_record("Flashing pmic_a");
+    term.run_process(fastboot + " flash pmic_a " + rom_path_en.get_text() + dir_sym + "pmic.img");
+
+
+    logger.make_record("Flashing rpm_a");
+    term.run_process(fastboot + " flash rpm_a " + rom_path_en.get_text() + dir_sym + "rpm.img");
+
+
+    logger.make_record("Flashing splash_a");
+    term.run_process(fastboot + " flash splash_a " + rom_path_en.get_text() + dir_sym + "splash.img");
+
+
+    logger.make_record("Flashing system_a");
+    term.run_process(fastboot + " flash system_a " + rom_path_en.get_text() + dir_sym + "system.img");
+
+
+    logger.make_record("Flashing systeminfo_a");
+    term.run_process(fastboot + " flash systeminfo_a " + rom_path_en.get_text() + dir_sym + "systeminfo.img");
+
+
+    logger.make_record("Flashing tz_a");
+    term.run_process(fastboot + " flash tz_a " + rom_path_en.get_text() + dir_sym + "tz.img");
+
+
+    logger.make_record("Flashing vendor_a");
+    term.run_process(fastboot + " flash vendor_a " + rom_path_en.get_text() + dir_sym + "vendor.img");
+
+
+    logger.make_record("Erasing ssd");
+    term.run_process(fastboot + " erase ssd");
+
+
+    logger.make_record("Erasing misc");
+    term.run_process(fastboot + " erase misc");
+
+
+    logger.make_record("Erasing sti");
+    term.run_process(fastboot + " erase sti");
+
+
+    logger.make_record("Erasing ddr");
+    term.run_process(fastboot + " erase ddr");
+
+
+    logger.make_record("Erasing securefs");
+    term.run_process(fastboot + " erase securefs");
+
+
+    logger.make_record("Erasing box");
+    term.run_process(fastboot + " erase box");
+
+
+    logger.make_record("Erasing boot_b");
+    term.run_process(fastboot + " erase boot_b");
+
+
+    logger.make_record("Set \'A\' as active slot");
+    term.run_process(fastboot + " --set-active=a");
+
+
+    logger.make_record("Factory reset");
+    term.run_process(fastboot + " -w");
+
+
+    logger.make_record("Reboot");
+    term.run_process(fastboot + " reboot");
+
+
+    logger.make_record("Flashing done");
+
+
+    flash_load.set_fraction(1.f);
 }
 
 void MainWindow::on_get_adb_clicked() {

@@ -9,6 +9,9 @@
 #include <fstream>
 #include <gtkmm.h>
 
+#include <thread>
+#include <chrono>
+
 #include <string>
 #include <array>
 
