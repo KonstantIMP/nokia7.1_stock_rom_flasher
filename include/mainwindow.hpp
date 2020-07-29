@@ -33,7 +33,7 @@ protected:
     void on_set_rom_path_clocked();
 
 
-    void on_get_help_clicked();
+    void on_get_info_clicked();
 
 private:
     Gtk::Grid main_grid;
@@ -47,7 +47,7 @@ private:
 
     Gtk::Button get_adb_btn;
     Gtk::Button get_rom_btn;
-    Gtk::Button get_help_btn;
+    Gtk::Button get_info_btn;
     Gtk::Button set_adb_path_btn;
     Gtk::Button set_rom_path_btn;
 

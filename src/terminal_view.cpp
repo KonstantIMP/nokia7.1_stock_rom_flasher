@@ -5,6 +5,7 @@ namespace KonstantIMP {
 terminal_view::terminal_view(const std::string & prf) : Gtk::ScrolledWindow(), prefix(prf) {
     this->add(terminal);
 
+    terminal.set_editable(false);
     terminal.get_buffer()->create_mark("last_line", terminal.get_buffer()->end());
     terminal.get_buffer()->set_text('[' + prf + "] ");
 }

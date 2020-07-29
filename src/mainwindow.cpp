@@ -45,7 +45,7 @@ void MainWindow::create_ui() {
 
     get_adb_btn.set_label("Get ADB");
     get_rom_btn.set_label("Get ROM");
-    get_help_btn.set_label("Get help");
+    get_info_btn.set_label("Get info");
 
     flash_btn.set_label("Flash Nokia 7.1");
 
@@ -64,7 +64,7 @@ void MainWindow::create_ui() {
 
     main_grid.attach(get_adb_btn, 0, 2, 3, 1);
     main_grid.attach(get_rom_btn, 3, 2, 3, 1);
-    main_grid.attach(get_help_btn, 6, 2, 3, 1);
+    main_grid.attach(get_info_btn, 6, 2, 3, 1);
 
     main_grid.attach(flash_btn, 9, 8, 9, 1);
 
@@ -86,7 +86,7 @@ void MainWindow::connect_signals() {
     set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clocked));
 
 
-    get_help_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_help_clicked));
+    get_info_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_info_clicked));
 }
 
 void MainWindow::on_set_adb_path_clocked() {
@@ -105,7 +105,7 @@ void MainWindow::on_set_rom_path_clocked() {
     if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
 }
 
-void MainWindow::on_get_help_clicked() {
+void MainWindow::on_get_info_clicked() {
     Gtk::AboutDialog about;
     about.set_transient_for(*this);
 

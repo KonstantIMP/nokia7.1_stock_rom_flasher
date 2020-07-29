@@ -5,6 +5,7 @@ namespace KonstantIMP {
 gtkmm_log::gtkmm_log(std::ostream * out) : KonstantIMP::log(out) {
     this->add(log_viewer);
 
+    log_viewer.set_editable(false);
     log_viewer.get_buffer()->create_mark("last_line", log_viewer.get_buffer()->end());
 }
 
