@@ -85,6 +85,7 @@ void MainWindow::connect_signals() {
     set_adb_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_adb_path_clocked));
     set_rom_path_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_set_rom_path_clocked));
 
+    get_adb_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_adb_clocked));
 
     get_info_btn.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_get_info_clicked));
 }
@@ -103,6 +104,27 @@ void MainWindow::on_set_rom_path_clocked() {
     rom_path.add_button("OK", Gtk::RESPONSE_OK);
 
     if(rom_path.run() == Gtk::RESPONSE_OK) rom_path_en.set_text(rom_path.get_filename());
+}
+
+void MainWindow::on_get_adb_clocked() {
+    Gtk::MessageDialog get_adb(*this, "How to get ADB", false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+
+    if(os == " LINUX ") {
+        get_adb.set_secondary_text("<b>Hello!</b>\r\n"
+                                   "I see, you don\' know how you can get <i>ADB</i>\r\n"
+                                   "You use <i>Linux</i> and need download <i>platform-tools</i> "
+                                   "from <a href=\"https://clck.ru/Px6a7\">official ADB website</a> or do it using your packet manager\r\n"
+                                   "The app will automaticly find ADB in the PATH", true);
+    }
+    else {
+        get_adb.set_secondary_text("<b>Hello!</b>\r\n"
+                                   "I see, you don\' know how you can get <i>ADB</i>\r\n"
+                                   "You use <i>Windows</i> and need download <i>platform-tools</i> "
+                                   "from <a href=\"https://clck.ru/Px6a7\">official ADB website</a>\r\n"
+                                   "Download it and unarchive, than set PATH in the app", true);
+    }
+
+    get_adb.run();
 }
 
 void MainWindow::on_get_info_clicked() {

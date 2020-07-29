@@ -32,6 +32,7 @@ protected:
     void on_set_adb_path_clocked();
     void on_set_rom_path_clocked();
 
+    void on_get_adb_clocked();
 
     void on_get_info_clicked();
 
