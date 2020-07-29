@@ -29,6 +29,9 @@ protected:
     void create_ui();
     void connect_signals();
 
+    void on_set_adb_path_clocked();
+    void on_set_rom_path_clocked();
+
 private:
     Gtk::Grid main_grid;
 
